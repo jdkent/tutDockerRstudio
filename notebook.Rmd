@@ -1,0 +1,643 @@
+---
+title: "Docker Rstudio Tutorial"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+This code is from The [Software Carpentry R Lesson](http://swcarpentry.github.io/r-novice-inflammation/)
+
+```{r}
+read.csv(file = "data/inflammation-01.csv", header = FALSE)
+```
+
+```{r}
+read.csv(file = "data/inflammation-01.csv")
+```
+
+
+```{r}
+weight_kg <- 55
+weight_kg
+2.2 * weight_kg
+```
+
+```{r}
+weight_kg <- 57.5
+# weight in kilograms is now
+weight_kg
+
+weight_lb <- 2.2 * weight_kg
+# weight in kg...
+weight_kg
+weight_lb
+```
+
+```{r}
+dat <- read.csv(file = "data/inflammation-01.csv", header = FALSE)
+head(dat)
+class(dat)
+dim(dat)
+dat[1, 1]
+dat[c(1, 3, 5), c(10, 20)]
+```
+
+```{r}
+dat[1:4, 1:10]
+dat[5:10, 1:10]
+dat[5, ]
+dat[, 16:18]
+```
+
+```{r}
+# first row, all of the columns
+patient_1 <- dat[1, ]
+# max inflammation for patient 1
+max(patient_1)
+# max inflammation for patient 2
+max(dat[2, ])
+# minimum inflammation on day 7
+min(dat[, 7])
+# mean inflammation on day 7
+mean(dat[, 7])
+# median inflammation on day 7
+median(dat[, 7])
+# standard deviation of inflammation on day 7
+sd(dat[, 7])
+```
+
+```{r}
+# first row, all of the columns
+patient_1 <- dat[1, ]
+# max inflammation for patient 1
+max(patient_1)
+```
+
+```{r}
+# max inflammation for patient 2
+max(dat[2, ])
+```
+
+```{r}
+# Summarize function
+summary(dat[, 1:4])
+```
+
+```{r}
+avg_patient_inflammation <- apply(dat, 1, mean)
+avg_day_inflammation <- apply(dat, 2, mean)
+
+avg_patient_inflammation
+avg_day_inflammation
+```
+
+```{r}
+animal <- c("m", "o", "n", "k", "e", "y")
+# first three characters
+animal[1:3]
+# last three characters
+animal[4:6]
+```
+
+```{r}
+patients <- seq(2, dim(dat)[1], 2)
+days <- seq(1,5)
+dat_bad <- dat[patients, days]
+
+dat_bad[patients, days] <- dat_bad[patients, days] / 2
+dat_bad
+```
+
+```{r}
+apply(dat[1:5,], MARGIN=1, mean)
+apply(dat[,1:10], MARGIN=2, mean)
+apply(dat[,seq(1, dim(dat)[2], 2)], MARGIN=2, mean)
+```
+
+```{r}
+plot(avg_day_inflammation)
+```
+
+```{r}
+min_day_inflammation <- apply(dat, 2, min)
+plot(min_day_inflammation)
+```
+
+```{r}
+sd_day_inflammation <- apply(dat, 2, sd)
+plot(sd_day_inflammation)
+```
+
+## Creating Functions
+
+```{r}
+fahrenheit_to_kelvin <- function(temp_F) {
+  temp_K <- ((temp_F - 32) * (5 / 9)) + 273.15
+  return(temp_K)
+}
+```
+
+
+```{r}
+# freezing point of water
+fahrenheit_to_kelvin(32)
+```
+
+```{r}
+# boiling point of water
+fahrenheit_to_kelvin(212)
+```
+
+```{r}
+kelvin_to_celsius <- function(temp_K) {
+  temp_C <- temp_K - 273.15
+  return(temp_C)
+}
+
+# absolute zero in Celsius
+kelvin_to_celsius(0)
+```
+
+```{r}
+fahrenheit_to_celsius <- function(temp_F) {
+  temp_K <- fahrenheit_to_kelvin(temp_F)
+  temp_C <- kelvin_to_celsius(temp_K)
+  return(temp_C)
+}
+
+# freezing point of water in Celsius
+fahrenheit_to_celsius(32.0)
+```
+
+```{r}
+highlight <- function(content, wrapper) {
+  return(c(wrapper, content, wrapper))
+}
+
+best_practice <- c("Write", "programs", "for", "people", "not", "computers")
+asterisk <- "***"  # R interprets a variable with a single value as a vector
+                   # with one element.
+highlight(best_practice, asterisk)
+```
+
+```{r}
+edges <- function(v){
+  return(c(v[1], v[length(v)]))
+}
+
+dry_principle <- c("Don't", "repeat", "yourself", "or", "others")
+edges(dry_principle)
+```
+
+```{r}
+input_1 <- 20
+mySum <- function(input_1, input_2 = 10) {
+  output <- input_1 + input_2
+  return(output)
+}
+
+mySum(input_1 = 1, 3)
+```
+
+```{r}
+center <- function(data, midpoint) {
+  new_data <- (data - mean(data)) + midpoint
+}
+
+z <- c(0, 0, 0, 0)
+z
+
+center(z, 3)
+```
+
+```{r}
+dat <- read.csv(file = "data/inflammation-01.csv", header = FALSE)
+centered <- center(dat[, 4], 0)
+head(centered)
+```
+
+```{r}
+# original min
+min(dat[, 4])
+
+# original mean
+mean(dat[, 4])
+
+# original max
+max(dat[, 4])
+
+# centered min
+min(centered)
+
+# centered mean
+mean(centered)
+
+# centered max
+max(centered)
+```
+
+```{r}
+# original standard deviation
+sd(dat[, 4])
+
+# centered standard deviation
+sd(centered)
+```
+
+```{r}
+# difference in standard deviations before and after
+sd(dat[, 4]) - sd(centered)
+```
+
+```{r}
+all.equal(sd(dat[, 4]), sd(centered))
+```
+
+```{r}
+center <- function(data, midpoint) {
+  # return a new vector containing the original data centered around the
+  # midpoint.
+  # Example: center(c(1, 2, 3), 0) => c(-1, 0, 1)
+  new_data <- (data - mean(data)) + midpoint
+  return(new_data)
+}
+```
+
+
+```{r}
+analyze <- function(f){
+  dat <- read.csv(f, header=FALSE)
+  avg_day_inflammation <- apply(dat, 2, mean)
+  plot(avg_day_inflammation)
+  
+  max_day_inflammation <- apply(dat, 2, max)
+  plot(max_day_inflammation)
+  
+  min_day_inflammation <- apply(dat, 2, min)
+  plot(min_day_inflammation)
+}
+
+analyze("data/inflammation-01.csv")
+```
+
+```{r}
+rescale <- function(v){
+  H <- max(v)
+  L <- min(v)
+  
+  return((v-L) / (H-L))
+}
+
+rescale(c(1,2,3,4,5))
+```
+
+## Analyzing Multiple Data Sets
+
+```{r}
+analyze <- function(filename) {
+  # Plots the average, min, and max inflammation over time.
+  # Input is character string of a csv file.
+  dat <- read.csv(file = filename, header = FALSE)
+  avg_day_inflammation <- apply(dat, 2, mean)
+  plot(avg_day_inflammation)
+  max_day_inflammation <- apply(dat, 2, max)
+  plot(max_day_inflammation)
+  min_day_inflammation <- apply(dat, 2, min)
+  plot(min_day_inflammation)
+}
+
+analyze("data/inflammation-01.csv")
+```
+
+```{r}
+analyze("data/inflammation-02.csv")
+```
+
+```{r}
+best_practice <- c("Let", "the", "computer", "do", "the", "work")
+print_words <- function(sentence) {
+  print(sentence[1])
+  print(sentence[2])
+  print(sentence[3])
+  print(sentence[4])
+  print(sentence[5])
+  print(sentence[6])
+}
+
+print_words(best_practice)
+```
+
+```{r}
+best_practice[-6]
+```
+
+```{r}
+print_words(best_practice[-6])
+```
+
+```{r}
+print_words <- function(sentence) {
+  for (word in sentence) {
+    print(word)
+  }
+}
+
+print_words(best_practice)
+```
+
+```{r}
+print_words(best_practice[-6])
+```
+
+```{r}
+len <- 0
+vowels <- c("a", "e", "i", "o", "u")
+for (v in vowels) {
+  len <- len + 1
+}
+# Number of vowels
+len
+```
+
+```{r}
+letter <- "z"
+for (letter in c("a", "b", "c")) {
+  print(letter)
+}
+```
+
+```{r}
+# after the loop, letter is
+letter
+```
+
+```{r}
+length(vowels)
+```
+
+```{r}
+seq(3)
+```
+
+```{r}
+print_N <- function(n) {
+  nat_nums <- seq(n)
+  for (num in nat_nums) {
+    print(num)
+  }
+}
+
+print_N(3)
+```
+
+```{r}
+total <- function(v){
+  tot_sum <- 0
+  for (n in v) {
+    tot_sum <- tot_sum + n
+  }
+  return(tot_sum)
+}
+ex_vec <- c(4, 8, 15, 16, 23, 42)
+total(ex_vec)
+```
+
+```{r}
+expo <- function(b, e) {
+  r <- 1
+  for (i in seq(e)) {
+    r <- r * b
+  }
+  return(r)
+}
+
+expo(2, 4)
+```
+
+```{r}
+list.files(path = "data", pattern = "csv")
+```
+
+```{r}
+list.files(path = "data", pattern = "inflammation")
+```
+
+```{r}
+list.files(path = "data", pattern = "csv", full.names = TRUE)
+```
+
+```{r}
+list.files(path = "data", pattern = "inflammation", full.names = TRUE)
+```
+
+```{r}
+filenames <- list.files(path = "data",  
+                        # Now follows a regular expression that matches:
+                        pattern = "inflammation-[0-9]{2}.csv",
+                        #          |            |        the standard file extension of comma-separated values
+                        #          |            the variable parts (two digits, each between 0 and 9)
+                        #          the static part of the filenames
+                        full.names = TRUE)
+filenames <- filenames[1:3]
+for (f in filenames) {
+  print(f)
+  analyze(f)
+}
+```
+
+```{r}
+analyze_all <- function(fpath, pattern) {
+  files <- list.files(fpath, pattern=pattern, full.names=TRUE)
+  for (fil in files) {
+    analyze(fil)
+  }
+}
+
+analyze_all("data", "inflammation-[0-9]{2}.csv")
+```
+
+## Making Choices
+
+```{r}
+pdf("inflammation-01.pdf")
+analyze("data/inflammation-01.csv")
+dev.off()
+```
+
+```{r}
+num <- 53
+if (num > 100) {
+  print("num is greater than 100")
+}
+
+```
+
+```{r}
+sign <- function(num) {
+  if (num > 0) {
+    return(1)
+  } else if (num == 0) {
+    return(0)
+  } else {
+    return(-1)
+  }
+}
+
+sign(-3)
+sign(0)
+sign(2/3)
+```
+
+```{r}
+if (1 > 0 && -1 > 0) {
+    print("both parts are true")
+} else {
+  print("at least one part is not true")
+}
+```
+
+```{r}
+if (1 > 0 || -1 > 0) {
+    print("at least one part is true")
+} else {
+  print("neither part is true")
+}
+```
+
+```{r}
+plot_dist <- function(v, threshold) {
+  if (length(v) > threshold) {
+    boxplot(v)
+  } else {
+    stripchart(v)
+  }
+}
+dat <- read.csv("data/inflammation-01.csv", header=FALSE)
+plot_dist(dat[, 10], threshold=10)
+plot_dist(dat[1:5, 10], threshold=10)  # samples (rows) 1-5 on day (column) 10
+```
+
+```{r}
+plot_dist <- function(v, threshold, use_boxplot=TRUE) {
+  if (length(v) > threshold) {
+    if (use_boxplot) {
+      boxplot(v)
+    } else {
+      hist(v)
+    }
+  } else {
+    stripchart(v)
+  }
+}
+
+dat <- read.csv("data/inflammation-01.csv", header = FALSE)
+plot_dist(dat[, 10], threshold = 10, use_boxplot = TRUE)   # day (column) 10 - create boxplot
+plot_dist(dat[, 10], threshold = 10, use_boxplot = FALSE)  # day (column) 10 - create histogram
+```
+
+```{r}
+plot_dist(dat[1:5, 10], threshold = 10)                    # samples (rows) 1-5 on day (column) 10
+```
+
+```{r}
+filenames <- list.files(path = "data", pattern = "inflammation-[0-9]{2}.csv", full.names = TRUE)
+filename_max <- "" # filename where the maximum average inflammation patient is found
+patient_max <- 0 # index (row number) for this patient in this file
+average_inf_max <- 0 # value of the average inflammation score for this patient
+for (f in filenames) {
+  dat <- read.csv(file = f, header = FALSE)
+  dat.means <- apply(dat, 1, mean)
+  for (patient_index in 1:length(dat.means)){
+    patient_average_inf <- dat.means[patient_index]
+    if (patient_average_inf > average_inf_max) {
+      filename_max <- f
+      patient_max <- patient_index
+      average_inf_max <- patient_average_inf
+    }
+  }
+}
+print(filename_max)
+print(patient_max)
+print(average_inf_max)
+```
+
+```{r}
+analyze <- function(filename, output = NULL) {
+  # Plots the average, min, and max inflammation over time.
+  # Input:
+  #    filename: character string of a csv file
+  #    output: character string of pdf file for saving
+  if (!is.null(output)) {
+    pdf(output)
+  }
+  dat <- read.csv(file = filename, header = FALSE)
+  avg_day_inflammation <- apply(dat, 2, mean)
+  plot(avg_day_inflammation)
+  max_day_inflammation <- apply(dat, 2, max)
+  plot(max_day_inflammation)
+  min_day_inflammation <- apply(dat, 2, min)
+  plot(min_day_inflammation)
+  if (!is.null(output)) {
+    dev.off()
+  }
+}
+analyze("data/inflammation-01.csv")
+```
+
+```{r}
+analyze("data/inflammation-01.csv", output = "inflammation-01.pdf")
+```
+
+```{r}
+dir.create("results")
+analyze("data/inflammation-01.csv", output="results/inflammation-01.pdf")
+```
+
+```{r}
+analyze_all <- function(pattern) {
+  # Directory name containing the data
+  data_dir <- "data"
+  # Directory name for results
+  results_dir <- "results"
+  # Runs the function analyze for each file in the current working directory
+  # that contains the given pattern.
+  filenames <- list.files(path = data_dir, pattern = pattern)
+  for (f in filenames) {
+    pdf_name <- file.path(results_dir, sub("csv", "pdf", f))
+    analyze(file.path(data_dir, f), output = pdf_name)
+  }
+}
+```
+
+```{r}
+analyze_all("inflammation.*csv")
+```
+
+```{r}
+analyze <- function(filename, output = NULL) {
+  # Plots the average, min, and max inflammation over time.
+  # Input:
+  #    filename: character string of a csv file
+  #    output: character string of pdf file for saving
+  if (!is.null(output)) {
+    pdf(output)
+  }
+  dat <- read.csv(file = filename, header = FALSE)
+  avg_day_inflammation <- apply(dat, 2, mean)
+  plot(avg_day_inflammation, type="l")
+  max_day_inflammation <- apply(dat, 2, max)
+  plot(max_day_inflammation, type="l")
+  min_day_inflammation <- apply(dat, 2, min)
+  plot(min_day_inflammation, type="l")
+  if (!is.null(output)) {
+    dev.off()
+  }
+}
+analyze("data/inflammation-01.csv")
+```
+
+```{r}
+analyze_all("inflammation.*csv")
+```
