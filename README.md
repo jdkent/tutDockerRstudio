@@ -6,7 +6,7 @@
 
 run the docker image without _explicitly_ downloading anything
 
-Without Docker Toolbox (Windows/Linux/Mac):
+Docker Desktop (Windows/Mac) or Docker native (Linux):
 
 ```bash
 docker run --rm -p 127.0.0.1:8787:8787 -e PASSWORD=uibh jdkent/tut-rstudio
@@ -25,6 +25,8 @@ the data came from.
 git clone https://github.com/jdkent/tutDockerRstudio.git
 cd tutDockerRstudio
 ```
+
+Docker Desktop (Windows/Mac) or Docker native (Linux):
 
 ```bash
 docker run --rm -p 127.0.0.1:8787:8787 -e PASSWORD=uibh -v ${PWD}:/home/rstudio/project jdkent/tut-rstudio
