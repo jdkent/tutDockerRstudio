@@ -1,5 +1,7 @@
 # Docker Tutorial
 
+## [Video of the teaching session](https://www.youtube.com/watch?v=mXT0HXu4uQY&list=PLXFuA4Ik1nXeeNPLEYZgMSMi5CDwwvRn7&index=4&t=75s)
+
 ## [Intro To Containers](http://www.repronim.org/coco2019-training/presentations/containers/presentation/#1)
 
 
